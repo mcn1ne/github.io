@@ -5,13 +5,6 @@
     <title>세나키우기 쿠폰 자동등록</title>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-NJTZY0W968"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-NJTZY0W968');
-    </script>
 </head>
 <body>
 <span>회원 번호 : </span><input type="text" id="uid">
@@ -72,13 +65,44 @@
         {id: 10, code: "16PASS1499", result: 0, response: '', description: '요청 전'},
         {id: 11, code: "SKIAMONPTK0917", result: 0, response: '', description: '요청 전'},
         {id: 12, code: "PDSPECIAL2023", result: 0, response: '', description: '요청 전'},
-       
     ];
 
     function req() {
         var uid = $('#uid').val()
         setCookie('uid', uid)
-        for (var a in tabledata) {
+
+
+    var table = new Tabulator("#example-table", {
+        data: tabledata,           //load row data from array
+        reactiveData: true,
+        layout: "fitDataFill",      //fit columns to width of table
+        responsiveLayout: "hide",  //hide columns that dont fit on the table
+        tooltips: true,            //show tool tips on cells
+        addRowPos: "top",          //when adding a new row, add it to the top of the table
+        history: true,             //allow undo and redo actions on the table
+        movableColumns: true,      //allow column order to be changed
+        resizableRows: true,       //allow row order to be changed
+        columns: [                 //define the table columns
+            {title: "No", field: "id", width: 70, editor: false},
+            {title: "Code", field: "code", width: 300, editor: "input"},
+            {
+                title: "status",
+                field: "result",
+                width: 90,
+                hozAlign: "center",
+                formatter: "tickCross",
+                sorter: "boolean",
+                editor: false
+            },
+            {title: "response", field: "response", width: 180, editor: false},
+            {title: "설명", field: "description", width: 300, editor: false},
+        ],
+    });
+
+        function req() {
+        var uid = $('#uid').val();
+        setCookie('uid', uid);
+                    for (var a in tabledata) {
             let i = a
             $.ajax({
                 type: 'POST',
@@ -109,33 +133,6 @@
             })
         }
     }
-
-    var table = new Tabulator("#example-table", {
-        data: tabledata,           //load row data from array
-        reactiveData: true,
-        layout: "fitDataFill",      //fit columns to width of table
-        responsiveLayout: "hide",  //hide columns that dont fit on the table
-        tooltips: true,            //show tool tips on cells
-        addRowPos: "top",          //when adding a new row, add it to the top of the table
-        history: true,             //allow undo and redo actions on the table
-        movableColumns: true,      //allow column order to be changed
-        resizableRows: true,       //allow row order to be changed
-        columns: [                 //define the table columns
-            {title: "No", field: "id", width: 70, editor: false},
-            {title: "Code", field: "code", width: 300, editor: "input"},
-            {
-                title: "status",
-                field: "result",
-                width: 90,
-                hozAlign: "center",
-                formatter: "tickCross",
-                sorter: "boolean",
-                editor: false
-            },
-            {title: "response", field: "response", width: 180, editor: false},
-            {title: "설명", field: "description", width: 300, editor: false},
-        ],
-    });
 </script>
 </body>
 </html>
