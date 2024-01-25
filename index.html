@@ -139,40 +139,59 @@
             {title: "설명", field: "description", width: 300, editor: false},
         ],
     });
-        function req() {
-        var uid = $('#uid').val();
-        setCookie('uid', uid);
-                    for (var a in tabledata) {
-            let i = a
-            $.ajax({
-                type: 'POST',
-                url: 'https://coupon.netmarble.com/skiagb',
-                data: {
-                    'pid': uid,
-                    'channelCode': 100,
-                    'couponCode': tabledata[i]['code'],
-                    'worldId': '',
-                    'nickname': ''
-                },
-                success: function (data) {
-                    if (data['resultCode'] === 'SUCCESS') {
-                        tabledata[i]['result'] = 1
-                        tabledata[i]['description'] = data['rewardItem']['rewardTitle']
-                    } else if (data['resultCode'] === 'NOT_EXISTS_PID') {
-                        tabledata[i]['description'] = '회원번호 확인 후 다시 시도해주세요'
-                    } else if (data['resultCode'] === 'COUPON_ALREADY_USE') {
-                        tabledata[i]['description'] = '이미 사용한 쿠폰'
-                    } else if (data['resultCode'] === 'COUPON_WRONG') {
-                        tabledata[i]['description'] = '잘못된 쿠폰 코드'
-                    } else {
-                        tabledata[i]['description'] = '나도 모르는 응답코드'
-                    }
-                    tabledata[i]['response'] = data['resultCode']
-                    table.updateData(tabledata)
-                }
-            })
-        }
+        function sendCouponRequest(i) {
+    if (i < tabledata.length) {
+        $.ajax({
+            type: 'POST',
+            url: 'https://coupon.netmarble.com/skiagb',
+            data: {
+                'pid': uid,
+                'channelCode': 100,
+                'couponCode': tabledata[i]['code'],
+                'worldId': '',
+                'nickname': ''
+            },
+            success: function (data) {
+                // 처리 로직 동일
+                updateTableData(i, data);
+                sendCouponRequest(i + 1); // 다음 요청
+            },
+            error: function (xhr, status, error) {
+                console.error('Error on coupon code:', tabledata[i]['code'], 'Error:', error);
+                tabledata[i]['description'] = '요청 처리 중 오류 발생';
+                tabledata[i]['response'] = 'ERROR';
+                table.updateData([tabledata[i]]);
+                sendCouponRequest(i + 1); // 다음 요청
+            }
+        });
     }
+}
+
+function updateTableData(i, data) {
+    switch (data['resultCode']) {
+        case 'SUCCESS':
+            tabledata[i]['result'] = 1;
+            tabledata[i]['description'] = data['rewardItem']['rewardTitle'];
+            break;
+        case 'NOT_EXISTS_PID':
+            tabledata[i]['description'] = '회원번호 확인 후 다시 시도해주세요';
+            break;
+        case 'COUPON_ALREADY_USE':
+            tabledata[i]['description'] = '이미 사용한 쿠폰';
+            break;
+        case 'COUPON_WRONG':
+            tabledata[i]['description'] = '잘못된 쿠폰 코드';
+            break;
+        default:
+            tabledata[i]['description'] = '알 수 없는 오류: ' + data['resultCode'];
+            break;
+    }
+    tabledata[i]['response'] = data['resultCode'];
+    table.updateData([tabledata[i]]);
+}
+
+// 첫 번째 요청 시작
+sendCouponRequest(0);
 </script>
 </body>
 </html>
