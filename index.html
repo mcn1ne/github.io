@@ -1,12 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Portfolio</title>
+    <meta charset="UTF-8">
+    <title>세나키우기 쿠폰 자동등록</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <p>Hello, World!</p>
+    <div class="container">
+        <h1>세나키우기 쿠폰 자동등록</h1>
+        <p>회원 번호를 입력하세요:</p>
+        <input type="text" id="memberNumber" placeholder="회원 번호">
+        <button onclick="submitCoupon()">쿠폰 사용</button>
+        <p id="result"></p>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>
