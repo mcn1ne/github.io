@@ -127,7 +127,40 @@
             {title: "설명", field: "description", width: 300, editor: false},
         ],
     });
-
+        function req() {
+        var uid = $('#uid').val();
+        setCookie('uid', uid);
+                    for (var a in tabledata) {
+            let i = a
+            $.ajax({
+                type: 'POST',
+                url: 'https://coupon.netmarble.com/skiagb',
+                data: {
+                    'pid': uid,
+                    'channelCode': 100,
+                    'couponCode': tabledata[i]['code'],
+                    'worldId': '',
+                    'nickname': ''
+                },
+                success: function (data) {
+                    if (data['resultCode'] === 'SUCCESS') {
+                        tabledata[i]['result'] = 1
+                        tabledata[i]['description'] = data['rewardItem']['rewardTitle']
+                    } else if (data['resultCode'] === 'NOT_EXISTS_PID') {
+                        tabledata[i]['description'] = '회원번호 확인 후 다시 시도해주세요'
+                    } else if (data['resultCode'] === 'COUPON_ALREADY_USE') {
+                        tabledata[i]['description'] = '이미 사용한 쿠폰'
+                    } else if (data['resultCode'] === 'COUPON_WRONG') {
+                        tabledata[i]['description'] = '잘못된 쿠폰 코드'
+                    } else {
+                        tabledata[i]['description'] = '나도 모르는 응답코드'
+                    }
+                    tabledata[i]['response'] = data['resultCode']
+                    table.updateData(tabledata)
+                }
+            })
+        }
+    }
 </script>
 </body>
 </html>
