@@ -9,7 +9,6 @@
 <body>
 <span>회원 번호 : </span><input type="text" id="uid">
 <button onclick="req();">쿠폰 사용</button>
-<a target="_blank" rel="noopener noreferrer" href="https://forum.netmarble.com/sk2/view/13/746266">회원 번호 확인 법</a>
 <hr>
 <span>쿠폰 코드 수정 가능.</span><br><br>
 <span>회원 정보 쿠키 저장.</span><br><br>
@@ -66,11 +65,6 @@
         {id: 11, code: "SKIAMONPTK0917", result: 0, response: '', description: '요청 전'},
         {id: 12, code: "PDSPECIAL2023", result: 0, response: '', description: '요청 전'},
     ];
-
-    function req() {
-        var uid = $('#uid').val()
-        setCookie('uid', uid)
-
 
     var table = new Tabulator("#example-table", {
         data: tabledata,           //load row data from array
